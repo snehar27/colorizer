@@ -14,3 +14,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--image", type=str, required=True,
                     help="input path for black & white image") # allows to pass in different images by providing their path
 args = vars(parser.parse_args())
+
+# Loading the Model
+print("Loading Model...")
+net = cv2.dnn.readNetFromCaffe(PROTOTXT, MODEL) # DNN - Deep Neural Network
+pts = np.load(POINTS) # loads the numpy object into memory
