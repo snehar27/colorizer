@@ -47,3 +47,7 @@ ab_channel = cv2.resize(ab_channel, (img.shape[1], img.shape[0]))
 
 L_channel = cv2.split(lab)[0]
 colorized = np.concatenate((L_channel[:, :, np.newaxis], ab_channel), axis=2) # append L to ab
+
+colorized = cv2.cvtColor(colorized, cv2.COLOR_LAB2BGR) # coonvert from LAB colorspace to BGR colorspace
+# cv2 reads in BGR and not in RGB
+colorized = np.clip(colorized, 0, 1)
