@@ -51,3 +51,10 @@ colorized = np.concatenate((L_channel[:, :, np.newaxis], ab_channel), axis=2) # 
 colorized = cv2.cvtColor(colorized, cv2.COLOR_LAB2BGR) # coonvert from LAB colorspace to BGR colorspace
 # cv2 reads in BGR and not in RGB
 colorized = np.clip(colorized, 0, 1)
+
+colorized = (255 * colorized).astype("uint8") # scale back up
+
+# Displaying images
+cv2.imshow("Original", img)
+cv2.imshow("Colorized", colorized)
+cv2.waitKey(0)
