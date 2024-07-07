@@ -17,5 +17,22 @@ args = vars(parser.parse_args())
 
 # Loading the Model
 print("Loading Model...")
-net = cv2.dnn.readNetFromCaffe(PROTOTXT, MODEL) # DNN - Deep Neural Network
+net = cv2.dnn.readNetFromCaffe(PROTOTXT, MODEL) # DNN - Deep Neural Network, module in cv2
 pts = np.load(POINTS) # loads the numpy object into memory
+
+# Loads centers for ab channel
+class8 = net.getLayerId("class8_ab")
+conv8 = net.getLayerId("conv8_313_rh")
+pts = pts.transpose().reshape(2, 313, 1, 1) # creates 1 x 1 convolutions
+net.getLayer(class8).blobs = [pts.astype("float32")]
+net.getLayer(conv8).blobs = [np.full([1, 313], 2.606, dtype = "float32")]
+
+# Reading the input image
+img = cv2.imread(args["image"]) # converts image into a matrix
+scaled = img.astype("float32") / 255.0 # scales to a range of values between 0 to 1
+lab = cv2.cvtColor(scaled, cv2.COLOR_BGR2LAB) # convert the colors from RGB (BGR in CV2 format) to LAB
+
+# Resizing the images
+resize = cv2.resize(lab, (224, 224)) # because the original model is trained on this size of images
+L_channel = cv2.split(resize)[0] # getting the L channel of the image
+L_channel -= 50 # hyperparameter
