@@ -34,5 +34,16 @@ lab = cv2.cvtColor(scaled, cv2.COLOR_BGR2LAB) # convert the colors from RGB (BGR
 
 # Resizing the images
 resize = cv2.resize(lab, (224, 224)) # because the original model is trained on this size of images
-L_channel = cv2.split(resize)[0] # getting the L channel of the image
+L_channel = cv2.split(resize)[0] # getting the L channel (first channel) of the image
 L_channel -= 50 # hyperparameter
+
+# Colorizing the image!
+print("Colorizing the image!")
+net.setInput(cv2.dnn.blobFromImage(L_channel)) # uses a collection of similar images that are differently pre-processed (blobbed from these images and feed image)
+ab_channel = net.forward()[0, :, :, :].transpose((1, 2, 0)) # feed forward input
+
+# Resize back to original image
+ab_channel = cv2.resize(ab_channel, (img.shape[1], img.shape[0]))
+
+L_channel = cv2.split(lab)[0]
+colorized = np.concatenate((L_channel[:, :, np.newaxis], ab_channel), axis=2) # append L to ab
